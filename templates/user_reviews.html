@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 800px;
+            margin: 20px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Heading styling */
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        /* Review box styling */
+        .review {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Title styling */
+        .review h3 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Meta information styling */
+        .review p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        /* Back button styling */
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Reviews</h1>
+        {% for review in reviews %}
+        <div class="review">
+            <h3>Title: {{ review['title'] }}</h3>
+            <p><strong>Rating:</strong> {{ review['rating'] }} stars</p>
+            <p><strong>Comment:</strong> {{ review['comment'] }}</p>
+            <p><strong>Review Date:</strong> {{ review['review_date'] }}</p>
+        </div>
+        {% else %}
+        <p>No reviews yet.</p>
+        {% endfor %}
+        <a href="{{ url_for('profile') }}" class="back-button">Back to Profile</a>
+    </div>
+</body>
+</html>
