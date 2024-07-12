@@ -1,9 +1,11 @@
-import sqlite3
+from db import get_db
+import openapi
 from datetime import datetime
 from cinemagoer import Cinemagoer
-import openapi
-from main2 import get_db
-from werkzeug.security import generate_password_hash, check_password_hash
+from passlib.context import CryptContext
+import sqlite3
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 conn = get_db()
 c = conn.cursor()
@@ -16,79 +18,45 @@ try:
 except sqlite3.OperationalError as e:
     pass
 
-
 def get_user_info(user):
-    # Fetch user information from the database
     c.execute('SELECT username, email, sign_up_date FROM users WHERE id = ?', (user,))
     found_user = c.fetchone()
-
     return found_user
 
-
 def get_reviews(user):
-    # for flask app
-    # Fetch the user’s reviews from the database
     c.execute('''SELECT m.title, r.rating, r.comment, r.review_date 
-                     FROM reviews r
-                     JOIN movies m ON r.movie_id = m.id
-                     WHERE r.user_id = ?''', (user,))
+                 FROM reviews r
+                 JOIN movies m ON r.movie_id = m.id
+                 WHERE r.user_id = ?''', (user,))
     reviews = c.fetchall()
-
     return reviews
 
-
 def make_user(username, password, email):
-    #username = input("Enter a username: ")
-    #password = input("Enter a password: ")
-    #email = input("Enter your email: ")
-    hashed_password = generate_password_hash(password)
+    hashed_password = pwd_context.hash(password)
     signup_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     try:
         c.execute(
             "INSERT INTO users (username, password, email, sign_up_date) VALUES (?, ?, ?, ?)",
-            (username,
-             hashed_password,
-             email,
-             signup_date))
+            (username, hashed_password, email, signup_date))
         conn.commit()
-        print("\nSuccessfully Made a New Account!")
         return c.lastrowid
-    # Error that is caught, when that information, or any exists.
     except sqlite3.IntegrityError:
-        print("\nUsername already exists. You need to login.")
         return None
 
-
 def login_user(username, password):
-    #username = input("Enter your username: ")
-    #password = input("Enter your password: ")
-
-    # check if username is valid
     c.execute("SELECT password FROM users WHERE username = ?", (username,))
     user_pass = c.fetchone()
 
-    # checks if stored hashed password matches the user-entered password
-    if user_pass is not None:
-        is_valid_pass = check_password_hash(user_pass[0], password)
-
-        if is_valid_pass:
-            # if password is valid, try to retrieve user
-            c.execute(
-                "SELECT id FROM users WHERE username = ?",
-                (username,))
-            user = c.fetchone()
-            if user:
-                print("\nLogin successful!\n")
-                return user[0]  # Getting id of user table
-            else:
-                print("\nInvalid credentials. Please try again.\n")
-                return None
+    if user_pass and pwd_context.verify(password, user_pass[0]):
+        c.execute("SELECT id FROM users WHERE username = ?", (username,))
+        user = c.fetchone()
+        if user:
+            return user[0]
+        else:
+            return None
     else:
-        print("\nInvalid credentials. Please try again.\n")
         return None
-
-
 def get_movie_id(title):
     c.execute("SELECT id FROM movies WHERE title = ?", (title,))
     movie = c.fetchone()

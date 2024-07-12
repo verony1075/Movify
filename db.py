@@ -1,6 +1,6 @@
 import sqlite3
 
-DATABASE = 'user_reviews.db'  # Update to your actual database file
+DATABASE = 'database.db'
 
 def get_db():
     db = sqlite3.connect(DATABASE, check_same_thread=False)

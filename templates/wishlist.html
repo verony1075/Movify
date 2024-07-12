@@ -103,7 +103,7 @@
             {% for movie in wishlist %}
                 <div class="movie">
                     <p>{{ movie.title }} (Added on {{ movie.added_date }})</p>
-                    <form method="POST" action="{{ url_for('remove_from_wishlist') }}">
+                    <form class="remove-wishlist-form" method="POST">
                         <input type="hidden" name="title" value="{{ movie.title }}">
                         <button type="submit" class="remove-btn">Remove from Wishlist</button>
                     </form>
@@ -114,5 +114,30 @@
         {% endif %}
         <a href="{{ url_for('index') }}" class="button">Go Back Home</a>
     </div>
+
+    <script>
+        document.querySelectorAll('.remove-wishlist-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = this.querySelector('input[name="title"]').value;
+
+                fetch("{{ url_for('remove_from_wishlist') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ title: title })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('.movie').remove();
+                    } else {
+                        alert("Failed to remove the movie from wishlist");
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

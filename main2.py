@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
 import movie_rec
-import sqlite3
 import openapi
 from cinemagoer import Cinemagoer
 import re
+from db import get_db 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '9bf26e1d684bc092e43722e46066e1af'
@@ -91,7 +91,7 @@ def submit_review():
 @app.route('/profile', methods=['GET'])
 def profile():
     if 'user_id' not in session:
-        return redirect(url_for('log-in'))
+        return redirect(url_for('login'))
 
     user_id = session['user_id']
     curr_user = movie_rec.get_user_info(user_id)
@@ -108,7 +108,6 @@ def my_reviews():
     user_reviews = movie_rec.get_reviews(user_id)
 
     return render_template('user_reviews.html', reviews=user_reviews)
-
 
 @app.route('/trivia', methods=['GET','POST'])
 def trivia():
@@ -131,7 +130,7 @@ def trivia():
             flash('No questions available for the selected movie.')
             return redirect(url_for('trivia'))"""
 
-        return render_template('trivia_questions.html', movie_title=movie_choice, questions=trivia_questions)
+        return render_template('trivia_questions.html', movie_title=movie_choice, questions=trivia_questions, enumerate=enumerate)
 
     return render_template('trivia_form.html')
 
@@ -258,8 +257,7 @@ def remove_from_wishlist():
         return jsonify({'success': False, 'error': 'User not logged in'}), 403
 
     user_id = session['user_id']
-    data = request.get_json()  # This line ensures JSON data is parsed correctly
-    movie_id = data['id']
+    data = request.get_json()
     title = data['title']
 
     success = movie_rec.remove_from_wishlist(user_id, title)
@@ -268,6 +266,7 @@ def remove_from_wishlist():
         return jsonify({'success': True})
     else:
         return jsonify({'success': False}), 400
+
 
 
 if __name__ == '__main__':

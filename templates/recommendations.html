@@ -5,53 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Recommendations</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
-        .recommendation { background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h1 { text-align: center; }
-        ul { list-style: none; padding: 0; }
-        li { padding: 10px; border-bottom: 1px solid #ccc; }
-        button { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
-        button:hover { background-color: #0056b3; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .movie-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .movie {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .movie img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .movie-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .movie-description {
+            color: #666;
+            margin-bottom: 10px;
+            flex-grow: 1;
+        }
+
+        .wishlist-btn {
+            align-self: flex-end;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .wishlist-btn:hover {
+            background-color: #218838;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Movie Recommendations</h1>
-    <div class="recommendation">
-        <h2>Based on your reviews, we recommend you to watch:</h2>
-        <form method="POST" action="{{ url_for('add_to_wishlist') }}">
-            <ul>
-                {% for movie in recommendations %}
-                    <li>
-                        <input type="checkbox" name="selected_movies" value="{{ movie['title'] }} - {{ movie['description'] }}">
-                        <strong>{{ movie['title'] }}</strong>: {{ movie['description'] }}
-                    </li>
-                {% endfor %}
-            </ul>
-            <button type="submit">Add to Wishlist</button>
-            <a href="{{ url_for('index') }}" class="button">Go to Home Page</a>
-        </form>
+    <div class="container">
+        <h2>Based on your answers, we recommend you to watch:</h2>
+        <div class="movie-list">
+            <div class="movie">
+                <img src="https://image.tmdb.org/t/p/w500/2uNW4WbgBXL25BAbXGLnLqX71Sw.jpg" alt="Venom">
+                <div>
+                    <p class="movie-title">Venom</p>
+                    <p class="movie-description">"Venom" is a 2018 superhero film based on the Marvel Comics character of the same name. The movie is directed by Ruben Fleischer and stars Tom Hardy as Eddie Brock, a journalist who becomes the host for an alien symbiote.</p>
+                </div>
+                <button class="wishlist-btn" onclick='addToWishlist("Venom", "Venom")'>Add to Wishlist</button>
+            </div>
+        </div>
+        <a href="{{ url_for('index') }}" class="button">Go to Home Page</a>
     </div>
 
-<script>
+    <script>
         function addToWishlist(id, title) {
-    fetch("/wishlist/add", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ id: id, title: title })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`${title} added to wishlist!`);
-            location.reload();
-        } else {
-            alert(`Failed to add ${title} to wishlist.`);
+            fetch("/wishlist/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: id, title: title })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`${title} added to wishlist!`);
+                    location.reload();
+                } else {
+                    alert(`Failed to add ${title} to wishlist.`);
+                }
+            });
         }
-    });
-}
-</script>
-
+    </script>
 </body>
 </html>
