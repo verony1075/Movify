@@ -115,7 +115,7 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 ## Contact
 
-For any questions or suggestions, please open an issue or contact me at [your-email@example.com].
+For any questions or suggestions, please open an issue or contact me at [veronysuccess@gmail.com].
 
 ---
 
