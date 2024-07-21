@@ -119,4 +119,3 @@ For any questions or suggestions, please open an issue or contact me at [veronys
 
 ---
 
-Feel free to customize the README further as per your project's needs.
