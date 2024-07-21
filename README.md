@@ -31,7 +31,7 @@ This project is a full-stack web application designed to provide personalized mo
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/yourusername/movie-recommendation-app.git
+    git clone https://github.com/verony1075/movie-recommendation-app.git
     cd movie-recommendation-app
     ```
 
